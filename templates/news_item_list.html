@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for item in objects_list %}
+
+    {{ item.source }} - {{ item.link }}
+
+{% endfor %}
+
+{% endblock content %}
+

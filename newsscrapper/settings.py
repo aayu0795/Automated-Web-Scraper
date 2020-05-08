@@ -106,8 +106,8 @@ CELERY_BROKER_URL = "redis://localhost:6379"
 # Celery beat
 # Every key in below dict is a schedule name
 CELERY_BEAT_SCHEDULE = {
-    "Send_emails_on_schedule": {
-        'task': 'main.tasks.send_schedule_emails',
+    "Scrape_Dev_To": {
+        'task': 'main.tasks.scrape_dev_to',
         'schedule': 10  # crontab(minute="*/30")  # every 30 minute
     }
 }

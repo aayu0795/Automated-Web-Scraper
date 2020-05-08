@@ -2,11 +2,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from main.views import mass_email_view
+from main.views import NewsItemListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', mass_email_view)
+    path('', NewsItemListView.as_view(), name="news_item_list")
 ]
 
 

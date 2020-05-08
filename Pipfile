@@ -18,6 +18,8 @@ Django = "==3.0.5"
 celery = "*"
 django-celery-beat = "*"
 redis = "*"
+requests = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.8"
