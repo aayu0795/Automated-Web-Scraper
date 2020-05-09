@@ -1,8 +1,14 @@
+import datetime
+from dateutil.relativedelta import relativedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+
+from django.utils import timezone
+
+from .models import NewsItem, ScrapeRecord
 
 
 def scrape(url):
@@ -33,22 +39,60 @@ def scrape(url):
         "//div[@class='single-article single-article-small-pic']"
     )
 
-    for article in article_elements:
+    try:
 
-        # check if div not a user
-        if (article.find_element_by_xpath(".//button")).text != "+ FOLLOW":
+        record = ScrapeRecord.objects.create(
+            finish_time=timezone.now()
+        )
 
-            # try get the anchor tag and href
-            result = article.find_element_by_xpath(
-                ".//a[@class='small-pic-link-wrapper index-article-link']"
-            )
+        for article in article_elements:
 
-            news_item_link = result.get_attribute('href')
-            news_item_title = result.text   # try get title
+            # check if div not a user
+            if (article.find_element_by_xpath(".//button")).text != "+ FOLLOW":
 
-            #  or we can do same things by title_result = article.find_element_by_tag_name('h3')
+                # try get the anchor tag and href
+                result = article.find_element_by_xpath(
+                    ".//a[@class='small-pic-link-wrapper index-article-link']"
+                )
 
-            # try get timestamp
-            timestamp_result = article.find_element_by_tag_name('time')
-            news_item_timestamp = timestamp_result.text
-            print(news_item_timestamp)
+                news_item_link = result.get_attribute('href')
+                news_item_title = result.text   # try get title
+
+                #  or we can do same things by title_result = article.find_element_by_tag_name('h3')
+
+                two_years_ago = datetime.date.today() - relativedelta(years=2)
+
+                # try get timestamp
+                timestamp_result = article.find_element_by_tag_name('time')
+                news_item_time = timestamp_result.text
+
+                # convert the news_item_time into python date object
+                if "'" in news_item_time:
+                    # parse the year
+                    new_item_date = datetime.datetime.strptime(
+                        news_item_time, "%b %d '%y").date()
+
+                else:
+                    # this year is the current year
+                    new_item_date = datetime.datetime.strptime(
+                        news_item_time, "%b %d")
+                    today = datetime.date.today()
+                    new_item_date = new_item_date.replace(
+                        year=today.year).date()
+
+                if new_item_date > two_years_ago:
+
+                    NewsItem.objects.get_or_create(
+                        source='Dev.to',
+                        title=news_item_title,
+                        link=news_item_link,
+                        publish_date=new_item_date
+                    )
+
+        record.finish_time = timezone.now()
+        record.finished = True
+        record.save()
+
+    except Exception as e:
+        # send ourself an email regarding the error
+        pass
