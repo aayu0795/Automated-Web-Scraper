@@ -2,7 +2,9 @@ import os
 import environ
 from celery.schedules import crontab
 
+
 env = environ.Env()
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(
@@ -21,8 +23,8 @@ SECRET_KEY = env("SECRET_KEY")
 # ALLOWED_HOSTS url list in development
 ALLOWED_HOSTS = ['127.0.0.1']
 
-# Application definition
 
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,7 +50,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'newsscrapper.urls'
+
 
 TEMPLATES = [
     {
@@ -66,10 +70,11 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'newsscrapper.wsgi.application'
 
+
 # Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -77,19 +82,16 @@ DATABASES = {
     }
 }
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.0/topics/i18n/
 
+# Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
 VENV_PATH = os.path.dirname(BASE_DIR)
@@ -97,11 +99,14 @@ STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(VENV_PATH, 'media_root')
 
+
 # Celery timezone
-# CELERY_TIMEZONE = "UTC"
+CELERY_TIMEZONE = "Asia/Kolkata"
+
 
 # Celery broker
 CELERY_BROKER_URL = "redis://localhost:6379"
+
 
 # Celery beat
 # Every key in below dict is a schedule name
@@ -113,7 +118,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 
-if DEBUG:
+if DEBUG:   # in development
     # Debug toolbar INSTALLED_APPS settings
     INSTALLED_APPS += ['debug_toolbar']
 

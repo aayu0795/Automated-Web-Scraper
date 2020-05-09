@@ -24,6 +24,7 @@ def scrape(url):
     timeout = 10    # request timeout after  10 sec
 
     try:
+        # wait till the content of the div is loaded completely
         WebDriverWait(browser, timeout).until(
             EC.visibility_of_element_located(
                 (By.XPATH,
@@ -32,6 +33,7 @@ def scrape(url):
         )
     except TimeoutException:
         print("Time out waiting for page to load")
+        raise TimeoutException
         browser.quit()
 
     # find all the element with this class --> single-article single-article-small-pic
@@ -39,9 +41,9 @@ def scrape(url):
         "//div[@class='single-article single-article-small-pic']"
     )
 
-    try:
+    try:    # if we get any errors
 
-        record = ScrapeRecord.objects.create(
+        record = ScrapeRecord.objects.create(   # scrape start time
             finish_time=timezone.now()
         )
 
@@ -56,9 +58,10 @@ def scrape(url):
                 )
 
                 news_item_link = result.get_attribute('href')
-                news_item_title = result.text   # try get title
+                news_item_title = result.text   # try get title …
 
-                #  or we can do same things by title_result = article.find_element_by_tag_name('h3')
+                #  or we can do same things by
+                # title_result = article.find_element_by_tag_name('h3')
 
                 two_years_ago = datetime.date.today() - relativedelta(years=2)
 
@@ -80,8 +83,8 @@ def scrape(url):
                     new_item_date = new_item_date.replace(
                         year=today.year).date()
 
+                # Save posts which are posted in last 2 years from now
                 if new_item_date > two_years_ago:
-
                     NewsItem.objects.get_or_create(
                         source='Dev.to',
                         title=news_item_title,
@@ -89,10 +92,11 @@ def scrape(url):
                         publish_date=new_item_date
                     )
 
-        record.finish_time = timezone.now()
+        record.finish_time = timezone.now()  # scrape end time
         record.finished = True
         record.save()
 
     except Exception as e:
         # send ourself an email regarding the error
+        raise e
         pass

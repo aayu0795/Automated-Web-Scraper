@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load title_tags %}
 
 {% block content %}
 <div class="mt-5 py-5">
@@ -45,7 +46,7 @@
             {% for item in object_list %}
             <tr>
             <th scope="row">{{ item.source }}</th>
-            <td><a href="{{ item.link }}" target="_blank">{{ item.title }}</td>
+            <td><a href="{{ item.link }}" target="_blank">{{ item.title|title }} | {{ item.title|description }}</td>
             <td>{{ item.publish_date }}</td>
             </tr>
             {% endfor %}
