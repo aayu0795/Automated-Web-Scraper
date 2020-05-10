@@ -82,6 +82,7 @@ DATABASES = {
     }
 }
 
+LOGOUT_REDIRECT_URL = '/'
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'

@@ -1,41 +1,66 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Scrapper</title>
+    <title>
+        Django Posts
+    </title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/a23139b8cb.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png" />
 </head>
 
-<body>
-    <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="{% url 'news_item_list' %}">News Scrapper</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+<body style="background: url({% static 'images/bg.svg' %});">
+    <nav class=" navbar navbar-expand-md navbar-dark bg-dark fixed-top" style="font-size:20px">
+        <a class="navbar-brand" href="{% url 'news_item_list' %}">
+            <svg class="bi bi-code-slash" width="2.5em" height="2.5em" viewBox="0 0 16 16" fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                    d="M4.854 4.146a.5.5 0 010 .708L1.707 8l3.147 3.146a.5.5 0 01-.708.708l-3.5-3.5a.5.5 0 010-.708l3.5-3.5a.5.5 0 01.708 0zm6.292 0a.5.5 0 000 .708L14.293 8l-3.147 3.146a.5.5 0 00.708.708l3.5-3.5a.5.5 0 000-.708l-3.5-3.5a.5.5 0 00-.708 0zm-.999-3.124a.5.5 0 01.33.625l-4 13a.5.5 0 01-.955-.294l4-13a.5.5 0 01.625-.33z"
+                    clip-rule="evenodd" />
+            </svg>
+            &nbsp;
+            <strong style="font-size:30px">Django Posts</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    {% if request.user.is_authenticated %}
-                        <a class="nav-link" href="#">Logout</a>
-                    {% else %}
-                        <a class="nav-link" href="#">Login</a>
-                    {% endif %}
-                </li>
-                <a class="nav-link" href="{% url 'scrape-history' %}">Scrape History</a>
+
             </ul>
+            {% if request.user.is_authenticated %}
+            <a class="nav-link text-muted text-light" href="/admin/logout/">
+                <i class="fas fa-user-astronaut fa-2x" style="color:white;" data-toggle="tooltip"
+                    data-placement="bottom" title="Logout"></i>
+            </a>
+            <a class="nav-link text-muted text-light" href="{% url 'scrape-history' %}">
+                <i class="fas fa-history fa-2x mr-2" style="color:white" data-toggle="tooltip" data-placement="bottom"
+                    title="History"></i>
+            </a>
+            {% else %}
+            <a class="nav-link text-muted text-light" href="/admin/">
+                <i class="fas fa-user-astronaut fa-2x" style="color:white;" data-toggle="tooltip"
+                    data-placement="bottom" title="Login"></i>
+            </a>
+            {% endif %}
         </div>
+        {% block search %}
+
+        {% endblock %}
     </nav>
 
     <main role="main" class="container">
-    
-    {% block content %}
-    
-    {% endblock content %}
+
+        {% block content %}
+
+        {% endblock content %}
 
     </main><!-- /.container -->
 

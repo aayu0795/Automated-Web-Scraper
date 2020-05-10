@@ -8,7 +8,7 @@ from .tasks import scrape_async
 
 class NewsItemListView(generic.ListView):
     template_name = "news_item_list.html"
-    paginate_by = 20
+    paginate_by = 5
 
     def get_queryset(self):
         qs = NewsItem.objects.all()
@@ -44,8 +44,8 @@ class ScrapeRecordListView(generic.FormView):
     def get_context_data(self, **kwargs):
         context = super(ScrapeRecordListView, self).get_context_data(**kwargs)
         page = self.request.GET.get('page', 1)
-        qs = ScrapeRecord.objects.all()
-        paginator = Paginator(qs, 20)
+        qs = ScrapeRecord.objects.all().order_by('-finish_time')
+        paginator = Paginator(qs, 7)
 
         try:
             qs = paginator.page(page)

@@ -10,4 +10,4 @@ def title(title):
 
 @register.filter
 def description(title):
-    return (title.split("…"))[1:]
+    return "".join((title.split("…"))[1:])
