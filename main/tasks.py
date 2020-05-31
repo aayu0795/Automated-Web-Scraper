@@ -1,5 +1,7 @@
-from celery import shared_task, task
 from .scrapper import scrape
+
+from celery import shared_task, task
+
 
 url = "https://dev.to/search?q=django"
 

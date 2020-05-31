@@ -1,9 +1,10 @@
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import reverse
-from .models import NewsItem, ScrapeRecord
-from django.views import generic
 from .forms import ScrapeForm
 from .tasks import scrape_async
+from .models import NewsItem, ScrapeRecord
+
+from django.views import generic
+from django.shortcuts import reverse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 class NewsItemListView(generic.ListView):

@@ -1,5 +1,6 @@
-from django.contrib import admin
 from .models import NewsItem, ScrapeRecord
+
+from django.contrib import admin
 
 
 class NewsItemAdmin(admin.ModelAdmin):

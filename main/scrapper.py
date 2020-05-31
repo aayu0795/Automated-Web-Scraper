@@ -1,34 +1,40 @@
+from .models import NewsItem, ScrapeRecord
+
 import datetime
 from dateutil.relativedelta import relativedelta
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 
 from django.utils import timezone
 
-from .models import NewsItem, ScrapeRecord
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 def scrape(url):
     # setting up selenium
     options = webdriver.ChromeOptions()
-    options.add_argument(" - incognito")    # changing mode to incognito
 
+    # changing mode to incognito
+    options.add_argument(" - incognito")
+
+    # giving path of the chrome driver
     browser = webdriver.Chrome(
         executable_path='./chromedriver', chrome_options=options)
 
-    browser.get(url)    # same as request.get
+    # same as request.get
+    browser.get(url)
 
-    timeout = 10    # request timeout after  10 sec
+    # request timeout after  10 sec
+    timeout = 10
 
     try:
-        # wait till the content of the div is loaded completely
+        # wait till the content of the article is loaded completely
         WebDriverWait(browser, timeout).until(
             EC.visibility_of_element_located(
                 (By.XPATH,
-                 "//div[@class='single-article single-article-small-pic']")
+                 "//article[@class='crayons-story']")
             )
         )
     except TimeoutException:
@@ -36,14 +42,15 @@ def scrape(url):
         raise TimeoutException
         browser.quit()
 
-    # find all the element with this class --> single-article single-article-small-pic
+    # find all the element with this class --> crayons-story
     article_elements = browser.find_elements_by_xpath(
-        "//div[@class='single-article single-article-small-pic']"
+        "//article[@class='crayons-story']"
     )
 
-    try:    # if we get any errors
+    try:    # just to check if we get any errors
 
-        record = ScrapeRecord.objects.create(   # scrape start time
+        # record scrape start time
+        record = ScrapeRecord.objects.create(
             finish_time=timezone.now()
         )
 
@@ -52,16 +59,19 @@ def scrape(url):
             # check if div not a user
             if (article.find_element_by_xpath(".//button")).text != "+ FOLLOW":
 
-                # try get the anchor tag and href
+                # try get the h2 tag
                 result = article.find_element_by_xpath(
-                    ".//a[@class='small-pic-link-wrapper index-article-link']"
+                    ".//h2[@class='crayons-story__title']"
                 )
 
-                news_item_link = result.get_attribute('href')
-                news_item_title = result.text   # try get title …
+                # try get title
+                news_item_link = result.find_element_by_xpath(
+                    ".//a").get_attribute('href')
+                news_item_title = result.text
 
-                #  or we can do same things by
-                # title_result = article.find_element_by_tag_name('h3')
+                # try get body
+                body_pr = article.find_element_by_xpath(
+                    ".//div[@class='crayons-story__snippet mb-1']").text
 
                 two_years_ago = datetime.date.today() - relativedelta(years=2)
 
@@ -87,16 +97,18 @@ def scrape(url):
                 if new_item_date > two_years_ago:
                     NewsItem.objects.get_or_create(
                         source='Dev.to',
-                        title=news_item_title,
+                        title=news_item_title + body_pr,
                         link=news_item_link,
                         publish_date=new_item_date
                     )
 
-        record.finish_time = timezone.now()  # scrape end time
+        # scrape end time
+        record.finish_time = timezone.now()
         record.finished = True
         record.save()
+        browser.quit()
 
     except Exception as e:
         # send ourself an email regarding the error
         raise e
-        pass
+        print(e)

@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class NewsItem(models.Model):
-    source = models.CharField(max_length=100)   # Medium / Dev.to
+    source = models.CharField(max_length=100)
     link = models.TextField()
     title = models.CharField(max_length=200)
     publish_date = models.DateField()
